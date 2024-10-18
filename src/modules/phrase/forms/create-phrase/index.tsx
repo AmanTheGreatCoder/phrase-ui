@@ -75,8 +75,6 @@ export const CreateEditPhraseForm = ({
 
 	const { phrase, isLoading, refetchPhrase } = usePhrase(editId as string);
 
-	const handleClose = () => onClose();
-
 	const translations = watch('translations');
 
 	const addTranslation = () => {
@@ -125,6 +123,15 @@ export const CreateEditPhraseForm = ({
 		}
 	}, [phrase, isEditMode, reset]);
 
+	const handleClose = () => {
+		reset({
+			phrase: '',
+			status: 'active',
+			translations: [{ language: '', text: '' }],
+		});
+		onClose();
+	};
+
 	const createPhraseMutation = useMutation({
 		mutationFn: (data: CreatePhraseSchema) => api.phrase.create(data),
 		onSuccess: () => {
@@ -141,9 +148,9 @@ export const CreateEditPhraseForm = ({
 		mutationFn: (data: UpdatePhraseSchema) => api.phrase.update(data.id, data),
 		onSuccess: () => {
 			toast.success('Phrase updated successfully');
+			handleClose();
 			onSuccess();
 			refetchPhrase();
-			handleClose();
 		},
 		onError: (error) => {
 			toast.error('Failed to update phrase');

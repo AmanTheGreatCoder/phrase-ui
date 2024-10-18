@@ -112,12 +112,6 @@ export const PhraseTemplate: React.FC = () => {
 		setIsCreateEditFormOpen(true);
 	};
 
-	const handleCloseCreateForm = () => {
-		setIsCreateEditFormOpen(false);
-		setEditId(null);
-		resetForm();
-	};
-
 	const handleDeleteClick = (phraseId: string) => {
 		setPhraseToDelete(phraseId);
 		setDeleteDialogOpen(true);
@@ -149,6 +143,7 @@ export const PhraseTemplate: React.FC = () => {
 	};
 
 	const handleClosePopover = () => {
+		resetForm();
 		setAnchorEl(null);
 		setSelectedPhraseTranslations(null);
 	};
@@ -444,7 +439,7 @@ export const PhraseTemplate: React.FC = () => {
 			<CreateEditPhraseForm
 				open={isCreateEditFormOpen}
 				editId={editId as string | undefined}
-				onClose={handleCloseCreateForm}
+				onClose={resetForm}
 				onSuccess={onCreateEditSuccess}
 			/>
 			<Dialog
