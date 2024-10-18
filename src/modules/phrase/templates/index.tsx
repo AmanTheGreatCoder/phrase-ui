@@ -6,6 +6,7 @@ import {
 	ArrowUpward,
 	Delete,
 	Edit,
+	FilterList,
 	Search,
 	Translate,
 } from '@mui/icons-material';
@@ -20,6 +21,7 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
+	Divider,
 	FormControl,
 	FormControlLabel,
 	FormGroup,
@@ -156,6 +158,20 @@ export const PhraseTemplate: React.FC = () => {
 	const open = Boolean(anchorEl);
 	const queryClient = useQueryClient();
 
+	const [sortByAnchorEl, setSortByAnchorEl] =
+		useState<HTMLButtonElement | null>(null);
+
+	const handleSortByClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setSortByAnchorEl(event.currentTarget);
+	};
+
+	const handleCloseSortBy = () => {
+		setSortByAnchorEl(null);
+	};
+
+	const openSortBy = Boolean(sortByAnchorEl);
+	const idSortBy = openSortBy ? 'sort-by-popover' : undefined;
+
 	const debouncedSearch = useCallback(
 		debounce(() => {
 			searchParams.current = {
@@ -225,7 +241,7 @@ export const PhraseTemplate: React.FC = () => {
 						}}
 					/>
 
-					<Paper sx={{ p: 2 }}>
+					{/* <Paper sx={{ p: 2 }}>
 						<Typography variant='subtitle1' gutterBottom>
 							Sort By
 						</Typography>
@@ -262,7 +278,51 @@ export const PhraseTemplate: React.FC = () => {
 								label='Translations'
 							/>
 						</FormGroup>
-					</Paper>
+					</Paper> */}
+
+					<Box display='flex' alignItems='center' gap={1}>
+						<Typography variant='subtitle1'>Sort By:</Typography>
+						<IconButton onClick={handleSortByClick} size='small'>
+							<FilterList />
+						</IconButton>
+						<Popover
+							id={idSortBy}
+							open={openSortBy}
+							anchorEl={sortByAnchorEl}
+							onClose={handleCloseSortBy}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'left',
+							}}
+						>
+							<Paper sx={{ p: 2, minWidth: 200 }}>
+								<FormGroup>
+									{[
+										{ name: 'phrase', label: 'Phrase' },
+										{ name: 'status', label: 'Status' },
+										{ name: 'translations.language', label: 'Translations' },
+									].map((field, index) => (
+										<React.Fragment key={field.name}>
+											<FormControlLabel
+												control={
+													<Checkbox
+														checked={sortFields.includes(
+															field.name as SortField
+														)}
+														onChange={handleSortFieldChange}
+														name={field.name}
+														size='small'
+													/>
+												}
+												label={field.label}
+											/>
+											{index < 2 && <Divider sx={{ my: 1 }} />}
+										</React.Fragment>
+									))}
+								</FormGroup>
+							</Paper>
+						</Popover>
+					</Box>
 
 					<FormControl sx={{ minWidth: 120 }}>
 						<InputLabel id='sort-order-label'>Order</InputLabel>
